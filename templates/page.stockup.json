@@ -1,0 +1,51 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "hero": {
+      "type": "kv-hero",
+      "settings": {
+        "campaign_preset": "stock",
+        "theme_variant": "dark",
+        "enable_inview": true,
+        "content_alignment": "start",
+        "overlay_opacity": 35
+      }
+    },
+    "promo": {
+      "type": "promo-badges",
+      "settings": {
+        "campaign_preset": "stock",
+        "enable_inview": true
+      }
+    },
+    "bundles": {
+      "type": "bundle-tiles",
+      "settings": {
+        "campaign_preset": "stock",
+        "enable_slider": true,
+        "enable_inview": true
+      }
+    },
+    "faq": {
+      "type": "faq-accordion",
+      "settings": {
+        "campaign_preset": "stock",
+        "enable_inview": true
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "promo",
+    "bundles",
+    "faq"
+  ]
+}

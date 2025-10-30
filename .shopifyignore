@@ -1,0 +1,36 @@
+# Shopify CLI 產生的暫存資料
+.shopify/**
+*.log
+
+# 本機環境變數檔案
+.env
+.env.*
+
+# 相依套件與建置輸出
+node_modules/**
+vendor/**
+dist/**
+build/**
+tmp/**
+coverage/**
+
+# 作業系統與編輯器快取
+.DS_Store
+Thumbs.db
+.vscode/**
+.idea/**
+*.code-workspace
+
+# 設計原檔與大型附件
+design/**
+預覽圖/**
+*.psd
+*.ai
+*.xd
+*.sketch
+*.zip
+*.rar
+
+# Shopify Theme Editor 本機覆寫檔案
+config/settings_data.local.json
+config/*.local.json

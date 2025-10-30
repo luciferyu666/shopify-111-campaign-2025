@@ -1,0 +1,205 @@
+{% liquid
+  assign section_classes = 'faq-accordion'
+  if section.settings.enable_inview
+    assign section_classes = section_classes | append: ' js-inview-trigger'
+  endif
+  assign campaign_preset = section.settings.campaign_preset | default: ''
+%}
+
+{% capture faq_presets_json %}
+{
+  "111": [
+    {
+      "question": "111 活動頁多久可以上線？",
+      "answer": "匯入 111 模板後，Hero / Badges / Bundles / FAQ 皆已綁定切圖，改 CTA 與價錢即可發布。"
+    },
+    {
+      "question": "要如何更新 srcset 尺寸？",
+      "answer": "切圖檔名已標示寬度（@480 / @690），若需新增尺寸，在 assets 目錄新增檔案並於 Liquid 中加入 source。"
+    },
+    {
+      "question": "限量 1500 組會在哪裡顯示？",
+      "answer": "Bundle tiles 第三卡片與 Hero 統一寫入，同步顯示庫存訊號，僅需調整 JSON 設定即可。"
+    }
+  ],
+  "newbie": [
+    {
+      "question": "需要額外設計師嗎？",
+      "answer": "不需要。newbie 切圖已含留白與文案指引，使用預設排列即可完成視覺。"
+    },
+    {
+      "question": "可以換掉其中一張切圖？",
+      "answer": "可以。於 assets 上傳新檔後，將 section 的預設關閉並使用原有 block，自訂圖片。"
+    },
+    {
+      "question": "如何給團隊看預覽？",
+      "answer": "執行 theme dev 產生預覽連結，或透過 page.newbie.json 複製為新自訂頁並分享。"
+    }
+  ],
+  "stock": [
+    {
+      "question": "囤貨倒數如何同步？",
+      "answer": "倒數資訊建議以 metafield 控制，或直接在 FAQ 指向 Google Sheet，方便業務即時更新。"
+    },
+    {
+      "question": "可以再加一組贈品圖嗎？",
+      "answer": "可以。於 assets/stock 新增圖檔後，在 bundle tiles section 中新增 block 或複製現有 JSON 物件。"
+    },
+    {
+      "question": "多語系如何處理？",
+      "answer": "FAQ 預設為中文，若需多語請改為 block 模式並搭配 Shopify 翻譯（Translate & Adapt）。"
+    }
+  ]
+}
+{% endcapture %}
+{% # theme-check-disable UnknownFilter %}
+{% assign faq_presets = faq_presets_json | strip | parse_json %}
+{% # theme-check-enable UnknownFilter %}
+{% assign faq_preset = faq_presets[campaign_preset] %}
+
+<section
+  id="faq-accordion-{{ section.id }}"
+  class="{{ section_classes }}"
+  data-section-id="{{ section.id }}"
+>
+  {% if section.settings.heading != blank %}
+    <header class="faq-accordion__header">
+      <h2 class="faq-accordion__heading">{{ section.settings.heading }}</h2>
+      {% if section.settings.subheading != blank %}
+        <p class="faq-accordion__subheading">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </header>
+  {% endif %}
+  <div class="faq-accordion__list">
+    {% if faq_preset %}
+      {% for item in faq_preset %}
+        {% assign accordion_id = 'faq-' | append: section.id | append: '-' | append: forloop.index %}
+        <div class="faq-accordion__item">
+          <button
+            class="faq-accordion__toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="{{ accordion_id }}-panel"
+            data-faq-toggle
+          >
+            <span class="faq-accordion__question">{{ item.question | escape }}</span>
+            <span class="faq-accordion__icon" aria-hidden="true">+</span>
+          </button>
+          <div
+            id="{{ accordion_id }}-panel"
+            class="faq-accordion__panel"
+            role="region"
+            aria-hidden="true"
+            data-faq-panel="{{ accordion_id }}-panel"
+          >
+            <div class="faq-accordion__answer">
+              {{ item.answer }}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      {% for block in section.blocks %}
+        {% assign accordion_id = 'faq-' | append: section.id | append: '-' | append: forloop.index %}
+        <div class="faq-accordion__item" {{ block.shopify_attributes }}>
+          <button
+            class="faq-accordion__toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="{{ accordion_id }}-panel"
+            data-faq-toggle
+          >
+            <span class="faq-accordion__question">{{ block.settings.question | escape }}</span>
+            <span class="faq-accordion__icon" aria-hidden="true">+</span>
+          </button>
+          <div
+            id="{{ accordion_id }}-panel"
+            class="faq-accordion__panel"
+            role="region"
+            aria-hidden="true"
+            data-faq-panel="{{ accordion_id }}-panel"
+          >
+            <div class="faq-accordion__answer">
+              {{ block.settings.answer }}
+            </div>
+          </div>
+        </div>
+      {% else %}
+        <p class="faq-accordion__empty" role="note">
+          Add FAQ blocks to answer common campaign questions.
+        </p>
+      {% endfor %}
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "FAQ accordion",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "select",
+      "id": "campaign_preset",
+      "label": "套用官方素材",
+      "info": "選擇 stock / newbie / 111 可自動帶入 FAQ 文案，留白則使用自訂區塊。",
+      "options": [
+        { "value": "", "label": "不使用預設" },
+        { "value": "stock", "label": "囤貨行銷（stock）" },
+        { "value": "newbie", "label": "新手行銷（newbie）" },
+        { "value": "111", "label": "雙11 主題（111）" }
+      ],
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section heading",
+      "default": "Campaign FAQs"
+    },
+    {
+      "type": "richtext",
+      "id": "subheading",
+      "label": "Section subheading",
+      "default": "<p>Prep your support team with answers shoppers expect.</p>"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_inview",
+      "label": "Enable in-view animations",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq",
+      "name": "FAQ item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "How quickly can I publish the 111 campaign page?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer",
+          "default": "<p>Use the preset sections to launch within minutes, then customize copy and imagery to match your brand.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ accordion",
+      "blocks": [
+        { "type": "faq" },
+        { "type": "faq" },
+        { "type": "faq" }
+      ]
+    }
+  ]
+}
+{% endschema %}

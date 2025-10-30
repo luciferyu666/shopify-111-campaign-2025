@@ -1,0 +1,20 @@
+{
+  "top_level": {
+    "missing": [],
+    "extra": [
+      ".codex_backup",
+      ".shopify",
+      ".vscode",
+      "design",
+      "docs",
+      "prompts",
+      "reports",
+      "預覽圖"
+    ]
+  },
+  "assets": {
+    "subdirectories": [],
+    "non_ascii_or_space": [],
+    "large_files": []
+  }
+}

@@ -1,0 +1,373 @@
+{% liquid
+  assign section_classes = 'promo-badges'
+  if section.settings.enable_inview
+    assign section_classes = section_classes | append: ' js-inview-trigger'
+  endif
+  if section.settings.align_center
+    assign section_classes = section_classes | append: ' promo-badges--center'
+  endif
+  assign campaign_preset = section.settings.campaign_preset | default: ''
+%}
+
+{% capture promo_badges_presets_json %}
+{
+  "111": [
+    {
+      "title": "雙主打加購",
+      "body": "A 組 5 件禮盒 + 現折碼，畫面直接帶出雙視覺。",
+      "icon": {
+        "alt": "111 A 組示意",
+        "webp": "111-bundle-a-690.webp",
+        "fallback": "111-bundle-a-690.png",
+        "width": 690,
+        "height": 553
+      },
+      "link_label": "套用 A 組",
+      "link_url": "#bundles"
+    },
+    {
+      "title": "高單價備貨",
+      "body": "B 組鎖定毛利商品，行動版直接以 srcset 等比例顯示。",
+      "icon": {
+        "alt": "111 B 組示意",
+        "webp": "111-bundle-b-690.webp",
+        "fallback": "111-bundle-b-690.png",
+        "width": 690,
+        "height": 511
+      },
+      "link_label": "查看 B 組",
+      "link_url": "#bundles"
+    },
+    {
+      "title": "限量加碼 1500 組",
+      "body": "切圖含 480 / 690 px 兩種尺寸，直接貼上即可。",
+      "icon": {
+        "alt": "111 限量加碼",
+        "webp": "111-addon-1500-690.webp",
+        "fallback": "111-addon-1500-690.png",
+        "width": 690,
+        "height": 246
+      },
+      "link_label": "放入主視覺",
+      "link_url": "#hero"
+    }
+  ],
+  "newbie": [
+    {
+      "title": "價值主張切片",
+      "body": "newbie-value-props-95 圖檔含 2 倍像素，適合做 USP。",
+      "icon": {
+        "alt": "新手價值示意",
+        "webp": "newbie-value-props-95.webp",
+        "fallback": "newbie-value-props-95.png",
+        "width": 95,
+        "height": 328
+      },
+      "link_label": "加入 USP",
+      "link_url": "#promo"
+    },
+    {
+      "title": "How-to 教學卡",
+      "body": "步驟導引 1:1 立刻用在 FAQ 或導購流程。",
+      "icon": {
+        "alt": "新手教學圖片",
+        "webp": "newbie-howto-95.webp",
+        "fallback": "newbie-howto-95.png",
+        "width": 95,
+        "height": 307
+      },
+      "link_label": "放到流程區",
+      "link_url": "#bundles"
+    },
+    {
+      "title": "社群證言",
+      "body": "newbie-reviews-95.png 已含留白，可直接套 CTA。",
+      "icon": {
+        "alt": "新手證言圖",
+        "webp": "newbie-reviews-95.webp",
+        "fallback": "newbie-reviews-95.png",
+        "width": 95,
+        "height": 266
+      },
+      "link_label": "放入推薦區",
+      "link_url": "#faq"
+    }
+  ],
+  "stock": [
+    {
+      "title": "倒數 USP 條",
+      "body": "stock-countdown-usp-184 主打補貨倒數，適合黏著 CTA。",
+      "icon": {
+        "alt": "囤貨倒數圖",
+        "webp": "stock-countdown-usp-184.webp",
+        "fallback": "stock-countdown-usp-184.png",
+        "width": 184,
+        "height": 184
+      },
+      "link_label": "貼到頁首",
+      "link_url": "#hero"
+    },
+    {
+      "title": "Top products 列表",
+      "body": "stock-top-products-184 圖收斂 3 組暢銷，可當賣點圖示。",
+      "icon": {
+        "alt": "囤貨熱銷圖",
+        "webp": "stock-top-products-184.webp",
+        "fallback": "stock-top-products-184.png",
+        "width": 184,
+        "height": 327
+      },
+      "link_label": "放入清單",
+      "link_url": "#bundles"
+    },
+    {
+      "title": "買越多越省",
+      "body": "stock-buy-more-184.png 為 4:5 切圖，行動版站滿 2 欄。",
+      "icon": {
+        "alt": "囤貨加購圖",
+        "webp": "stock-buy-more-184.webp",
+        "fallback": "stock-buy-more-184.png",
+        "width": 184,
+        "height": 328
+      },
+      "link_label": "加入加購",
+      "link_url": "#promo"
+    }
+  ]
+}
+{% endcapture %}
+{% # theme-check-disable UnknownFilter %}
+{% assign promo_badges_presets = promo_badges_presets_json | strip | parse_json %}
+{% # theme-check-enable UnknownFilter %}
+{% assign promo_badges_preset = promo_badges_presets[campaign_preset] %}
+{% assign promo_responsive_widths = '480, 768, 1280' %}
+{% assign promo_icon_sizes = '(max-width: 480px) 60vw, (max-width: 768px) 40vw, 320px' %}
+
+<section
+  id="promo-badges-{{ section.id }}"
+  class="{{ section_classes }}"
+  data-section-id="{{ section.id }}"
+>
+  {% if section.settings.heading != blank %}
+    <div class="promo-badges__header">
+      <h2 class="promo-badges__heading">{{ section.settings.heading }}</h2>
+      {% if section.settings.subheading != blank %}
+        <p class="promo-badges__subheading">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </div>
+  {% endif %}
+  <div class="promo-badges__grid" role="list">
+    {% if promo_badges_preset %}
+      {% for badge in promo_badges_preset %}
+        <article
+          class="promo-badges__item"
+          role="listitem"
+        >
+          {% if badge.icon %}
+            {% assign promo_badge_fallback = images[badge.icon.fallback] %}
+            {% assign promo_badge_alt = badge.icon.alt | default: badge.title | escape %}
+            <div class="promo-badges__icon" aria-hidden="true">
+              {% if promo_badge_fallback %}
+                {{ promo_badge_fallback
+                  | image_url: width: 960
+                  | image_tag:
+                    widths: promo_responsive_widths,
+                    sizes: promo_icon_sizes,
+                    alt: promo_badge_alt,
+                    loading: 'lazy',
+                    decoding: 'async'
+                }}
+              {% elsif badge.icon.fallback != blank %}
+                <img
+                  src="{{ badge.icon.fallback | asset_url }}"
+                  alt="{{ promo_badge_alt }}"
+                  width="{{ badge.icon.width | default: 360 }}"
+                  height="{{ badge.icon.height | default: 360 }}"
+                  loading="lazy"
+                  decoding="async"
+                >
+              {% endif %}
+            </div>
+          {% endif %}
+          <div class="promo-badges__content">
+            <h3 class="promo-badges__title">
+              {{ badge.title | escape }}
+            </h3>
+            {% if badge.body != blank %}
+              <p class="promo-badges__body">
+                {{ badge.body | escape }}
+              </p>
+            {% endif %}
+            {% if badge.link_label != blank %}
+              <a
+                class="promo-badges__link"
+                href="{{ badge.link_url | default: '#' }}"
+              >
+                {{ badge.link_label | escape }}
+              </a>
+            {% endif %}
+          </div>
+        </article>
+      {% endfor %}
+    {% else %}
+      {% for block in section.blocks %}
+        <article
+          class="promo-badges__item"
+          role="listitem"
+          {{ block.shopify_attributes }}
+        >
+          {% if block.settings.icon != blank %}
+            <div class="promo-badges__icon" aria-hidden="true">
+              {% assign promo_block_icon_alt = block.settings.icon.alt | default: block.settings.title | escape %}
+              {{ block.settings.icon
+                | image_url: width: 960
+                | image_tag:
+                  widths: promo_responsive_widths,
+                  sizes: promo_icon_sizes,
+                  alt: promo_block_icon_alt,
+                  loading: 'lazy',
+                  decoding: 'async'
+              }}
+            </div>
+          {% endif %}
+          <div class="promo-badges__content">
+            <h3 class="promo-badges__title">
+              {{ block.settings.title | escape }}
+            </h3>
+            {% if block.settings.body != blank %}
+              <p class="promo-badges__body">
+                {{ block.settings.body }}
+              </p>
+            {% endif %}
+            {% if block.settings.link_label != blank %}
+              <a
+                class="promo-badges__link"
+                href="{{ block.settings.link | default: '#' }}"
+                {% if block.settings.link_aria_label != blank %}
+                  aria-label="{{ block.settings.link_aria_label | escape }}"
+                {% endif %}
+                {% if block.settings.open_in_new_tab %}
+                  target="_blank" rel="noopener"
+                {% endif %}
+              >
+                {{ block.settings.link_label | escape }}
+              </a>
+            {% endif %}
+          </div>
+        </article>
+      {% else %}
+        <p class="promo-badges__empty" role="note">
+          Add badges to highlight key selling points.
+        </p>
+      {% endfor %}
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Promo badges",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "select",
+      "id": "campaign_preset",
+      "label": "套用官方素材",
+      "info": "選擇 stock / newbie / 111 可直接載入切圖與文案，留白則使用自訂區塊。",
+      "options": [
+        { "value": "", "label": "不使用預設" },
+        { "value": "stock", "label": "囤貨行銷（stock）" },
+        { "value": "newbie", "label": "新手行銷（newbie）" },
+        { "value": "111", "label": "雙11 主題（111）" }
+      ],
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section heading",
+      "default": "Why merchants love this campaign"
+    },
+    {
+      "type": "richtext",
+      "id": "subheading",
+      "label": "Section subheading",
+      "default": "<p>Summarize benefits to build trust quickly.</p>"
+    },
+    {
+      "type": "checkbox",
+      "id": "align_center",
+      "label": "Center align content",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_inview",
+      "label": "Enable in-view animations",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "badge",
+      "name": "Promo badge",
+      "limit": 6,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Icon"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Fast setup"
+        },
+        {
+          "type": "richtext",
+          "id": "body",
+          "label": "Description",
+          "default": "<p>Publish the 111 landing page in under 10 minutes.</p>"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link URL"
+        },
+        {
+          "type": "text",
+          "id": "link_label",
+          "label": "Link label",
+          "default": "See playbook"
+        },
+        {
+          "type": "text",
+          "id": "link_aria_label",
+          "label": "ARIA label",
+          "default": "Learn more about the fast setup playbook"
+        },
+        {
+          "type": "checkbox",
+          "id": "open_in_new_tab",
+          "label": "Open in new tab",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Promo badges",
+      "blocks": [
+        { "type": "badge" },
+        { "type": "badge" },
+        { "type": "badge" }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+

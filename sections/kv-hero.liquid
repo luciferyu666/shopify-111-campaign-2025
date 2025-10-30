@@ -1,0 +1,495 @@
+{% liquid
+  assign section_classes = 'kv-hero'
+  if section.settings.theme_variant != blank
+    assign section_classes = section_classes | append: ' kv-hero--' | append: section.settings.theme_variant
+  endif
+  if section.settings.enable_inview
+    assign section_classes = section_classes | append: ' js-inview-trigger'
+  endif
+  assign campaign_preset = section.settings.campaign_preset | default: ''
+%}
+
+{% capture kv_hero_presets_json %}
+{
+  "111": {
+    "eyebrow": "雙11 旗艦方案",
+    "heading": "111 分鐘完成囤貨主頁",
+    "subheading": "左右雙視覺搭配限時倒數，將熱門加購一次搬到 Hero。",
+    "primary_cta": {
+      "label": "立即建立 111 活動",
+      "url": "#bundles",
+      "aria": "前往 111 精選組合"
+    },
+    "secondary_cta": {
+      "label": "下載素材",
+      "url": "#promo",
+      "aria": "打開雙11 物料下載區"
+    },
+    "stats": [
+      { "value": "3", "label": "檔期亮點" },
+      { "value": "1500+", "label": "限量加購" }
+    ],
+    "media": [
+      {
+        "alt": "111 左側主視覺",
+        "webp": "111-hero-left-345.webp",
+        "fallback": "111-hero-left-345.png",
+        "width": 345,
+        "height": 737
+      },
+      {
+        "alt": "111 右側主視覺",
+        "webp": "111-hero-right-345.webp",
+        "fallback": "111-hero-right-345.png",
+        "width": 345,
+        "height": 737
+      }
+    ]
+  },
+  "newbie": {
+    "eyebrow": "新戶暖身",
+    "heading": "用 4 個指引完成第一個行銷頁",
+    "subheading": "Hero 整合操作解說，預覽、表單、證言一次到位。",
+    "primary_cta": {
+      "label": "套用新手模板",
+      "url": "#promo",
+      "aria": "前往新手重點區塊"
+    },
+    "secondary_cta": {
+      "label": "下載教學 PDF",
+      "url": "#faq",
+      "aria": "閱讀新手常見問題"
+    },
+    "stats": [
+      { "value": "4", "label": "步驟指南" },
+      { "value": "24hr", "label": "快速上線" }
+    ],
+    "media": [
+      {
+        "alt": "新手 hero 版頭",
+        "webp": "newbie-hero-95.webp",
+        "fallback": "newbie-hero-95.png",
+        "width": 95,
+        "height": 532
+      },
+      {
+        "alt": "操作流程卡",
+        "webp": "newbie-howto-95.webp",
+        "fallback": "newbie-howto-95.png",
+        "width": 95,
+        "height": 307
+      }
+    ]
+  },
+  "stock": {
+    "eyebrow": "囤貨補貨季",
+    "heading": "倒數檔期，備貨 + 贈品一次說清",
+    "subheading": "用雙卡 Hero 呈現大件商品與加購 USP，支援桌機／手機同步視覺。",
+    "primary_cta": {
+      "label": "立即囤貨",
+      "url": "#bundles",
+      "aria": "查看囤貨組合"
+    },
+    "secondary_cta": {
+      "label": "下載訂貨表",
+      "url": "#faq",
+      "aria": "下載囤貨訂單表"
+    },
+    "stats": [
+      { "value": "8%", "label": "平均提升" },
+      { "value": "48hr", "label": "補貨時程" }
+    ],
+    "media": [
+      {
+        "alt": "囤貨主視覺商品",
+        "webp": "stock-hero-184.webp",
+        "fallback": "stock-hero-184.png",
+        "width": 184,
+        "height": 451
+      },
+      {
+        "alt": "囤貨 USP 卡片",
+        "webp": "stock-footer-kv-184.webp",
+        "fallback": "stock-footer-kv-184.png",
+        "width": 184,
+        "height": 102
+      }
+    ]
+  }
+}
+{% endcapture %}
+{% # theme-check-disable UnknownFilter %}
+{% assign kv_hero_presets = kv_hero_presets_json | strip | parse_json %}
+{% # theme-check-enable UnknownFilter %}
+{% assign kv_hero_preset = kv_hero_presets[campaign_preset] %}
+{% assign kv_responsive_widths = '480,768,1280' | split: ',' %}
+{% assign kv_responsive_sizes = '(max-width: 480px) 100vw, (max-width: 768px) 70vw, 520px' %}
+
+<section
+  id="kv-hero-{{ section.id }}"
+  class="{{ section_classes }}"
+  data-section-id="{{ section.id }}"
+>
+  <div class="kv-hero__media">
+    {% if kv_hero_preset and kv_hero_preset.media %}
+      <div class="kv-hero__media-grid">
+        {% for media in kv_hero_preset.media %}
+          {% assign kv_media_fallback = images[media.fallback] %}
+          {% assign kv_media_webp = media.webp | default: '' %}
+          {% if kv_media_webp != blank %}
+            {% assign kv_media_webp = images[kv_media_webp] %}
+          {% endif %}
+          {% capture kv_fallback_srcset -%}
+            {%- if kv_media_fallback -%}
+              {%- for width in kv_responsive_widths -%}
+                {{ kv_media_fallback | image_url: width: width }} {{ width }}w{%- unless forloop.last -%}, {% endunless -%}
+              {%- endfor -%}
+            {%- else -%}
+              {{ media.fallback | asset_url }} 720w
+            {%- endif -%}
+          {%- endcapture %}
+          {% if media.webp != blank %}
+            {% capture kv_webp_srcset -%}
+              {%- if kv_media_webp -%}
+                {%- for width in kv_responsive_widths -%}
+                  {{ kv_media_webp | image_url: width: width }} {{ width }}w{%- unless forloop.last -%}, {% endunless -%}
+                {%- endfor -%}
+              {%- else -%}
+                {{ media.webp | asset_url }} 720w
+              {%- endif -%}
+            {%- endcapture %}
+          {% endif %}
+          <figure class="kv-hero__media-item">
+            <picture>
+              {% if media.webp != blank %}
+                <source
+                  srcset="{{ kv_webp_srcset | strip }}"
+                  sizes="{{ kv_responsive_sizes }}"
+                  type="image/webp"
+                >
+              {% endif %}
+              {% if kv_media_fallback %}
+                <img
+                  src="{{ kv_media_fallback | image_url: width: 960 }}"
+                  srcset="{{ kv_fallback_srcset | strip }}"
+                  sizes="{{ kv_responsive_sizes }}"
+                  alt="{{ media.alt | escape }}"
+                  width="{{ kv_media_fallback.width | default: media.width | default: 960 }}"
+                  height="{{ kv_media_fallback.height | default: media.height | default: 540 }}"
+                  loading="lazy"
+                  decoding="async"
+                >
+              {% else %}
+                <img
+                  src="{{ media.fallback | asset_url }}"
+                  srcset="{{ kv_fallback_srcset | strip }}"
+                  sizes="{{ kv_responsive_sizes }}"
+                  alt="{{ media.alt | escape }}"
+                  width="{{ media.width | default: 960 }}"
+                  height="{{ media.height | default: 540 }}"
+                  loading="lazy"
+                  decoding="async"
+                >
+              {% endif %}
+            </picture>
+          </figure>
+        {% endfor %}
+      </div>
+    {% elsif section.settings.desktop_image != blank %}
+      {% capture kv_desktop_srcset -%}
+        {%- for width in kv_responsive_widths -%}
+          {{ section.settings.desktop_image | image_url: width: width }} {{ width }}w{%- unless forloop.last -%}, {% endunless -%}
+        {%- endfor -%}
+      {%- endcapture %}
+      {% if section.settings.mobile_image != blank %}
+        {% capture kv_mobile_srcset -%}
+          {%- for width in kv_responsive_widths -%}
+            {{ section.settings.mobile_image | image_url: width: width }} {{ width }}w{%- unless forloop.last -%}, {% endunless -%}
+          {%- endfor -%}
+        {%- endcapture %}
+      {% endif %}
+      <picture>
+        {% if section.settings.mobile_image != blank %}
+          <source
+            media="(max-width: 767px)"
+            srcset="{{ kv_mobile_srcset | strip }}"
+            sizes="(max-width: 480px) 100vw, (max-width: 768px) 90vw, 520px"
+          >
+        {% endif %}
+        <img
+          src="{{ section.settings.desktop_image | image_url: width: 960 }}"
+          srcset="{{ kv_desktop_srcset | strip }}"
+          sizes="{{ kv_responsive_sizes }}"
+          alt="{{ section.settings.desktop_image.alt | default: shop.name | escape }}"
+          width="{{ section.settings.desktop_image.width }}"
+          height="{{ section.settings.desktop_image.height }}"
+          loading="lazy"
+          decoding="async"
+        >
+      </picture>
+    {% endif %}
+  </div>
+  <div class="kv-hero__overlay" style="--kv-hero-overlay: {{ section.settings.overlay_opacity | divided_by: 100.0 }};"></div>
+  <div class="kv-hero__content kv-hero__content--{{ section.settings.content_alignment }}">
+    {% if kv_hero_preset %}
+      {% if kv_hero_preset.eyebrow != blank %}
+        <p class="kv-hero__eyebrow">
+          {{ kv_hero_preset.eyebrow }}
+        </p>
+      {% endif %}
+      {% if kv_hero_preset.heading != blank %}
+        <h1 class="kv-hero__heading">
+          {{ kv_hero_preset.heading }}
+        </h1>
+      {% endif %}
+      {% if kv_hero_preset.subheading != blank %}
+        <p class="kv-hero__subheading">
+          {{ kv_hero_preset.subheading }}
+        </p>
+      {% endif %}
+      {% if kv_hero_preset.primary_cta or kv_hero_preset.secondary_cta %}
+        <div class="kv-hero__cta-group">
+          {% if kv_hero_preset.primary_cta %}
+            <a
+              class="kv-hero__cta"
+              href="{{ kv_hero_preset.primary_cta.url | default: '#' }}"
+              aria-label="{{ kv_hero_preset.primary_cta.aria | default: kv_hero_preset.primary_cta.label | escape }}"
+            >
+              {{ kv_hero_preset.primary_cta.label }}
+            </a>
+          {% endif %}
+          {% if kv_hero_preset.secondary_cta %}
+            <a
+              class="kv-hero__cta kv-hero__cta--ghost"
+              href="{{ kv_hero_preset.secondary_cta.url | default: '#' }}"
+              aria-label="{{ kv_hero_preset.secondary_cta.aria | default: kv_hero_preset.secondary_cta.label | escape }}"
+            >
+              {{ kv_hero_preset.secondary_cta.label }}
+            </a>
+          {% endif %}
+        </div>
+      {% endif %}
+      {% if kv_hero_preset.stats %}
+        <div class="kv-hero__stats">
+          {% for stat in kv_hero_preset.stats %}
+            <div class="kv-hero__stat">
+              <span class="kv-hero__stat-value">{{ stat.value }}</span>
+              <span class="kv-hero__stat-label">{{ stat.label }}</span>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% else %}
+      {% for block in section.blocks %}
+        {% case block.type %}
+          {% when 'eyebrow' %}
+            <p class="kv-hero__eyebrow" {{ block.shopify_attributes }}>
+              {{ block.settings.text | escape }}
+            </p>
+          {% when 'heading' %}
+            <h1 class="kv-hero__heading" {{ block.shopify_attributes }}>
+              {{ block.settings.text }}
+            </h1>
+          {% when 'subheading' %}
+            <p class="kv-hero__subheading" {{ block.shopify_attributes }}>
+              {{ block.settings.text }}
+            </p>
+          {% when 'cta_button' %}
+            {% if block.settings.link_label != blank %}
+              <a
+                class="kv-hero__cta"
+                href="{{ block.settings.link | default: '#' }}"
+                {% if block.settings.link_aria_label != blank %}
+                  aria-label="{{ block.settings.link_aria_label | escape }}"
+                {% endif %}
+                {% if block.settings.open_in_new_tab %}
+                  target="_blank" rel="noopener"
+                {% endif %}
+                {{ block.shopify_attributes }}
+              >
+                {{ block.settings.link_label | escape }}
+              </a>
+            {% endif %}
+          {% when 'stat' %}
+            <div class="kv-hero__stat" {{ block.shopify_attributes }}>
+              <span class="kv-hero__stat-value">{{ block.settings.value | escape }}</span>
+              <span class="kv-hero__stat-label">{{ block.settings.label | escape }}</span>
+            </div>
+        {% endcase %}
+      {% endfor %}
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Key visual hero",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "select",
+      "id": "campaign_preset",
+      "label": "套用官方素材",
+      "info": "若選擇 stock / newbie / 111，系統會自動載入對應切圖與文案。",
+      "options": [
+        { "value": "", "label": "不使用預設" },
+        { "value": "stock", "label": "囤貨行銷（stock）" },
+        { "value": "newbie", "label": "新手行銷（newbie）" },
+        { "value": "111", "label": "雙11 主題（111）" }
+      ],
+      "default": ""
+    },
+    {
+      "type": "select",
+      "id": "theme_variant",
+      "label": "Theme variant",
+      "options": [
+        { "value": "light", "label": "Light" },
+        { "value": "dark", "label": "Dark" }
+      ],
+      "default": "light"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_inview",
+      "label": "Enable in-view animations",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "Content alignment",
+      "options": [
+        { "value": "start", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "end", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Overlay opacity",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "default": 30
+    },
+    {
+      "type": "image_picker",
+      "id": "desktop_image",
+      "label": "Desktop visual"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "Mobile visual"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "eyebrow",
+      "name": "Eyebrow",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "111 campaign"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "name": "Heading",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Heading",
+          "default": "<p>Boost your sales with seasonal bundles</p>"
+        }
+      ]
+    },
+    {
+      "type": "subheading",
+      "name": "Subheading",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Subheading",
+          "default": "<p>Launch a high-converting campaign in minutes.</p>"
+        }
+      ]
+    },
+    {
+      "type": "cta_button",
+      "name": "Primary CTA",
+      "limit": 2,
+      "settings": [
+        {
+          "type": "text",
+          "id": "link_label",
+          "label": "Link label",
+          "default": "Start building"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link URL"
+        },
+        {
+          "type": "text",
+          "id": "link_aria_label",
+          "label": "ARIA label",
+          "default": "Start building the 111 campaign"
+        },
+        {
+          "type": "checkbox",
+          "id": "open_in_new_tab",
+          "label": "Open in new tab",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "name": "Highlight stat",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "text",
+          "id": "value",
+          "label": "Value",
+          "default": "3x"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Average ROAS uplift"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Key visual hero",
+      "blocks": [
+        { "type": "eyebrow" },
+        { "type": "heading" },
+        { "type": "subheading" },
+        { "type": "cta_button" }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
