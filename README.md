@@ -1,40 +1,49 @@
-# VS Code × OpenAI Codex × Shopify CLI 快速上手包
+# Shopify 111 Campaign – 行銷頁主題（OS 2.0 / Shopify CLI 3.x）
 
-本包包含：
-- `.vscode/tasks.json`：常用 Shopify 題庫任務（dev / check / push）。
-- `prompts/codex_first_prompt.md`：IDE 內給 Codex 的「首次提示」模板。
-- 本說明檔。
+以 **Shopify Online Store 2.0 + Sections/Blocks + Shopify CLI 3.x** 打造的「111 行銷活動主題」。  
+支援 **桌機 1280×500 hero banner**、行動端 RWD、活動卡片格狀導覽、FAQ 手風琴、進場動畫（`IntersectionObserver` / `prefers-reduced-motion` 降級）等。
 
-> 建議將本包放入你的專案根目錄：`F:\From C download\shopify-111-campaign-2025\`
+<p align="center">
+  <img src="docs/images/hero-softlight-1280x500.jpg" alt="Hero Banner – Soft Light Surreal Style" width="960">
+</p>
 
----
+> 上圖為專案 hero banner（柔光、超現實感，**1280×500**，適合桌機首頁頂部）。  
+> 若要另外展示編輯器或頁面預覽，可在下方加入你的第二張圖：
 
-## 1) 前置安裝
-1. **OpenAI for VS Code / Codex**：在 VS Code 安裝官方擴充，或依 OpenAI 說明用 VSIX 側載（Work with Apps – VS Code）。
-   - 參考：OpenAI 說明中心〈Install the Work with Apps VS Code extension〉。
-2. **Shopify CLI**：安裝並登入你的商店帳戶（需 Node.js / Git）。
-   - 參考：Shopify CLI 與 Theme 指令 `theme dev`、`theme check` 文件。
-3. （首次）在專案根目錄建立 `.vscode/tasks.json` 與 `prompts/` 目錄（已隨本包提供）。
-
-## 2) 在 VS Code 執行任務
-- **開發預覽**：`Terminal → Run Task… → Shopify: Dev server (theme dev)`，輸入 `myshop.myshopify.com` 後按 Enter。
-- **靜態檢查**：`Shopify: Theme Check (lint)`（必要時先跑 `--init` 產生 `.theme-check.yml`）。
-- **推送到開發主題**：`Shopify: Theme Push (to dev theme)`。
-
-## 3) 在 IDE 使用 Codex
-- 開啟 `prompts/codex_first_prompt.md`，複製內容到 Codex 面板作為首次提示。
-- 對話時可 @ 檔名（視擴充功能），請 Codex 只改 `sections/`、`assets/` 等允許的路徑。
-- 大任務可先讓 Codex 列「變更計畫」→ 確認後再套用。
-
-## 4) 常見問題
-- **`shopify` 指令找不到**：確認已安裝 Shopify CLI 並重新啟動終端。
-- **Windows 路徑含空白**：直接以 VS Code「開啟資料夾」方式進入專案，Tasks 會在 `workspaceFolder` 內執行，不需特別轉義。
-- **Lighthouse 效能**：優先使用響應式圖片與延遲載入、減少第三方腳本。
+<p align="center">
+  <img src="docs/images/editor-grid.jpg" alt="Theme Editor - Campaign Entry Grid" width="960">
+</p>
 
 ---
 
-參考文件：
-- OpenAI：Codex VS Code/CLI（developers.openai.com）
-- OpenAI Help：Work with Apps VS Code extension
-- VS Code：Tasks 與 `tasks.json` schema
-- Shopify：CLI（`theme dev`）、Theme Check
+## ✨ 特色 Highlights
+
+- **OS 2.0 模組化架構**：`templates/*.json` + `sections/*` + `snippets/*`，可在 Theme Editor 自由拖拉配置。  
+- **RWD 與效能**：桌機/行動自適應；圖片使用 `image_url | image_tag` 產生 `srcset`，首屏可加 `fetchpriority="high"`。  
+- **互動與可及性**：  
+  - `IntersectionObserver` 進場動畫，搭配 `prefers-reduced-motion` 自動降級；  
+  - FAQ 採 WAI-ARIA 標記（`button[aria-controls]` / `aria-expanded` + `role="region"`）。  
+- **開發者體驗**：  
+  - **Shopify CLI 3.x** 一鍵 `theme dev` 熱更新；  
+  - `shopify theme check` 靜態檢查；  
+  - `run-shopify-tasks.ps1`(Windows PS7) 與 `.vscode/tasks.json`（可選）幫你在 VS Code 直接跑 Dev/Check/Push。
+
+> 參考：  
+> - Shopify CLI 主題命令（`theme dev / push / share / check`）【[官方文件]】  
+>   - `theme dev` 會回傳 **http://127.0.0.1:9292** 以 **熱更新 CSS / sections**，並提供開發主題與預覽連結【[docs]】。  
+> - Theme Access：以 7 天有效的 **Theme Access 密碼**安全授權 CLI 操作主題【[docs]】。  
+> - Theme Check：`shopify theme check` / `.theme-check.yml` 設定與 CI 集成【[docs]】。  
+> - Theme Architecture（Layout/Template/Section/Snippet/Assets/Config/Locales）【[docs]】【[help]】。
+
+[官方文件 – Shopify CLI Theme commands]: https://shopify.dev/docs/api/shopify-cli/theme  
+[docs]: https://shopify.dev/docs/api/shopify-cli/theme/theme-dev  
+[Theme Access]: https://shopify.dev/docs/storefronts/themes/tools/theme-access  
+[Theme Access App]: https://apps.shopify.com/theme-access  
+[Theme Check docs]: https://shopify.dev/docs/storefronts/themes/tools/theme-check/commands  
+[Theme Check config]: https://shopify.dev/docs/storefronts/themes/tools/theme-check/configuration  
+[Theme Architecture docs]: https://shopify.dev/docs/storefronts/themes/architecture  
+[help]: https://help.shopify.com/en/manual/online-store/themes/theme-structure
+
+---
+
+## 🗂 專案結構（精簡）
